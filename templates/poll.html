@@ -1,0 +1,355 @@
+<html>
+  <title>Voting App</title>
+  <head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}"></link>
+  <script src="https://use.fontawesome.com/8647d9d7f9.js"></script>
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.min.js"></script>
+   <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+  </head>
+    <body>
+      <div class="filter hidden"></div>
+      <div class="resDialog hidden text-center container-fluid"><div class="resmsg">Loading</div><button class="btn btn-block" id="OK">OK</button></div>
+        <div class="menuBody">
+    <div class="Menu row">
+      <div class="container-fluid col-md-4 col-lg-4 col-sm-4  col-xs-12 text-center title"><h3><a href="{{url_for('main')}}" class="Va">Voting App</a></h3></div>
+	<div class="container-fluid col-md-4 col-lg-4 col-sm-4  col-xs-6 text-center msg"><h5>
+	                                                                                    made with <i class="fa fa-headphones" aria-hidden="true"></i> and <i class="fa fa-heart" aria-hidden="true"></i>
+											    <p>-Harshit
+	                                                                                  </h5>
+
+	</div>
+      <div class="container-fluid col-md-4  col-lg-4 col-sm-4  col-xs-6 text-center login"><h4>{% if USER %}
+                                                                                             	<div class="row ">
+                                                                                             	  <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6 name">{{ USER.name}}</div>
+                                                                                             	  <div class="col-md-6 col-lg-6 col-sm-6 col-xs-6"><img src="{{USER.picture}}" class="img-responsive logpic"></div>
+                                                                                             	</div>
+	                                                                                      {% else %}
+                                                                                        	<div class="unlog">
+                                                                                             <a>Login <i class="fa fa-sign-in" aria-hidden="true"></i></a>
+	                                                                                                </div>
+                                                                                             {% endif %}
+  </div>                                                                                       </a></h4></div>
+    </div>
+	  <div class="dialog invi">
+	    <center>
+	    {% if USER%}
+	    <a href="{{url_for('disconnect')}}" class="btn  display-block">Logout</a>
+	    {% else %}
+	    <h3>Using</h3>
+	    <a href="{{url_for('login')}}" class="btn  display-block git">Github<i class="fa fa-github-alt" aria-hidden="true"></i></a>
+	      {% endif %}
+	</center>
+   	 </div>
+	<div class="body container-fluid text-center">
+	  <h3 class="pollName">{{POLL.name}}</h3>
+	  <div class="row">
+	    <div class="container-fluid col-md-6 col-lg-6 col-sm-6 col-xs-12 optionContainer">
+	  <select name="option"  class="option form-control ">
+	    {% for i in OP %}
+	    	<option value="{{i.name}}">{{i.name}}</option>
+	    {% endfor %}
+	    	<option value="custum">Add a custom option</option>
+	  </select>
+	      <div class="custom"></div>
+	      <button class="btn btn-block submit">Submit<i class="fa fa-paper-plane" aria-hidden="true"></i>
+</button>
+	  </div>
+	   <div class="container-fluid col-md-6 col-lg-6 col-sm-6 col-xs-12">
+		<div class="container-fluid chart">
+	     <canvas id="myChart" width="300" height="300"></canvas>
+		  </div>
+	  </div>
+	  </div>
+	</div>
+
+
+<style>
+  body {
+  font-family: 'Raleway', sans-serif;
+  }
+  .title
+  {
+  	height: 60px;
+	border-bottom: solid 0.25px #eee;
+  	background-color:#fff;
+  }
+  .msg {
+
+  padding-top:10px;
+  height: 60px;
+  border-bottom: solid 0.25px #eee;
+  background-color:#fff;
+  }
+  .login{
+  	padding-top:0px;
+  	height: 60px;
+  	border-bottom: solid 0.25px #eee;
+  	overflow:hidden;
+  	cursor: pointer;
+  }
+  .Menu{
+  position: fixed;
+  top:0px;
+  width:105%;
+  box-shadow: 0px 0px 10px #444;
+  background:#fff;
+  }
+  .dialog{
+  position: fixed;
+  padding:10px;
+  top:70px;
+  right:11%;
+  width:100px;
+  box-shadow: 0px 0px 5px 1px #444;
+  border-radius:5%;
+  background:#fff;
+  z-index:110;
+  transition-property: all;
+  transition-duration: 0.5s;
+  overflow:hidden;
+  }
+  .resDialog{
+  position: absolute;
+  padding:10px;
+  width:300px;
+  border-radius:3px;
+  background:#fff;
+  z-index:105;
+  opacity:1;
+  transition-property: all;
+  transition-duration: 0.5s;
+  overflow:hidden;
+  }
+  #OK{
+  max-width:400;
+  }
+  .filter{
+  	position:fixed;
+	z-index:100;
+  	top:0px;
+  	background-color:#000;
+  	opacity:0.7;
+  	width:100%;
+  	height:100%;
+	transition-property: all;
+  	transition-duration: 0.5s;
+  }
+  .row {
+
+  }
+  .propic{
+   height:60px;
+   border-radius:1%;
+   padding-top:20px;
+  }
+  .logpic{
+   height:40px;
+   border-radius:1%;
+  }
+  .pollName{
+  margin-top:0px;
+  }
+  .name{
+  padding:0px;
+  padding-top:13px;
+  text-align: right;
+  }
+  .unlog{
+  padding-top:12px;
+  }
+  .invi{
+  	top:60px;
+  	pointer-events: none;
+  	opacity: 0;
+    }
+  .hidden{
+  	display:hidden;
+  	opacity:0;
+  }
+  .menuBody{
+  position:fixed;
+  z-index:100;
+  }
+.body{
+  margin-top:130px;
+  border: solid 0.25px #eee;
+  max-width:800px;
+  }
+  .btn{
+  background:#fff;
+  border:solid 0.25px #aaa;
+  outline:none;
+  color:#000;
+  transition-property:background,color;
+  transition-duration: 0.5s;
+  }
+  .btn:hover,.btn:active,.btn:focus,.btn:hover:focus{
+  background:#3399ff;
+  color:#fff;
+  outline:none;
+  border:solid 0.25px #eee;
+  }
+  .btn-block{
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:10px;
+  max-width:600px;
+  }
+  select{
+  display: block;
+  width:100%;
+  margin-top:10px;
+  }
+  .cusInput{
+  margin-top:5px;
+  }
+  .chart{
+  max-width:300px;
+  padding-top:40px;
+  padding-bottom:20px;
+  }
+  a{
+  text-decoration:none;
+  color:#000;
+  }
+  a:hover,a:focus,a:hover:focus{
+  text-decoration:none;
+  color:#000;
+  outline:none;
+  }
+  .Va{
+  color:#000;
+  }
+  .git{
+  background:#000;
+  color:#fff;
+  border:solid 0.25px #eee;
+  }
+</style>
+
+<script>
+  var dialogVisible=false,html="";
+  var ctx = $("#myChart"),data;
+  function mkchart() {
+  $.ajax({
+      type: 'POST',
+      url: '/{{POLL.id}}/data',
+      processData: false,
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response if necessary.
+  	data = result.data
+  	console.log(typeof(result.value[0]));
+  var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: result.value,
+        datasets: [{
+
+            label: '# of Votes',
+
+            data: data,
+            backgroundColor: [
+                'rgba(155, 199, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+  	        'rgba(55, 199, 13, 0.8)',
+                'rgba(154, 162, 35, 0.8)',
+                'rgba(55, 206, 186, 0.8)',
+                'rgba(175, 19, 102, 0.8)',
+                'rgba(50, 10, 55, 0.8)',
+                'rgba(25, 255, 164, 0.8)'
+            ],
+            borderColor: [
+                'rgba(155,199,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+  	        'rgba(55, 199, 13, 1)',
+                'rgba(154, 162, 35, 1)',
+                'rgba(55, 206, 186, 1)',
+                'rgba(175, 19, 102, 1)',
+                'rgba(50, 10, 55, 1)',
+                'rgba(25, 255, 164, 1)'
+            ],
+            borderWidth: 1
+        }]
+    }
+});
+       }
+     });
+
+  }
+  $(document).ready(function() {
+  	mkchart();
+  });
+
+ $(document).on('tap click','.login',function () {
+  	if (dialogVisible==false)
+  	{
+  		$(".dialog").removeClass("invi");
+  		dialogVisible=true;
+  	}
+  	else
+  	{
+  		$(".dialog").addClass("invi");
+  		dialogVisible=false;
+  	}
+  });
+  $(document).on('tap click','#OK',function () {
+  	mkchart();
+  	$('.filter').addClass("hidden");
+	$('.resDialog').addClass("hidden");
+  });
+  $('.option').change(function(){
+    if($(this).val() == 'custum'){
+      $('.custom').html("<input type='text' class='form-control cusInput'></input>");
+    }
+    if($(this).val() != 'custum'){
+      $('.custom').html("");
+    }
+
+});
+  $(document).on('tap click','.submit',function () {
+  	var res=[],name=$('.option').val(),vote=$('.option').val();
+  	if (vote=='custum')
+  	{
+  		vote = $(".cusInput").val();
+  		if (vote==""){
+  			popup("");
+  			$('.resmsg').html("Please Login");
+  			return;
+  		}
+  	}
+  	popup("");
+  	$( "#OK" ).prop( "disabled", true );
+      $.ajax({
+      type: 'POST',
+      url: '/{{POLL.id}}/',
+      processData: false,
+      data: JSON.stringify({'Vote':vote}),
+      contentType: 'application/octet-stream; charset=utf-8',
+      success: function(result) {
+        // Handle or verify the server response if necessary.
+  	$( "#OK" ).prop( "disabled", false );
+  	$('.resmsg').html(result);
+       }
+     });
+  });
+  function popup(message) {
+	var maskHeight = $(document).height();
+	var maskWidth = $(window).width();
+	var dLeft= maskWidth/2-($('.resDialog').width()/2); ;
+  	var dtop=maskHeight/3-($('.resDialog').height()/2);
+	$('.filter').removeClass("hidden");
+	$('.resDialog').css({top: dtop, left:dLeft}).removeClass("hidden");
+}
+</script>      
